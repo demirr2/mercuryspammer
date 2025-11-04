@@ -5,67 +5,32 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Mercury Spammer — Token Loader (Local)</title>
 <style>
-  :root{
-    --bg:#050008;
-    --neon1:#9b5cff;
-    --neon2:#ff66cc;
-  }
-  body{
-    margin:0;
-    min-height:100vh;
-    background:var(--bg);
-    color:#fff;
-    font-family:Inter, "Poppins", system-ui, sans-serif;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:32px;
-  }
+  :root{ --bg:#050008; --neon1:#9b5cff; --neon2:#ff66cc; }
+  body{ margin:0; min-height:100vh; background:var(--bg); color:#fff; font-family:Inter, "Poppins", system-ui, sans-serif;
+         display:flex; align-items:center; justify-content:center; padding:32px; }
   .panel{
-    width:980px;
-    max-width:calc(100% - 48px);
-    display:flex;
-    gap:28px;
-    border-radius:14px;
-    padding:20px;
+    width:980px; max-width:calc(100% - 48px); display:flex; gap:28px; border-radius:14px; padding:20px;
     background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
     box-shadow:0 20px 60px rgba(0,0,0,0.6);
   }
-
-  /* sol: saturn */
-  .left {
-    width:340px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:16px;
-  }
-  .avatar{
-    width:220px;height:220px;
-    display:flex;align-items:center;justify-content:center;
-  }
+  /* left: saturn */
+  .left { width:340px; display:flex; flex-direction:column; align-items:center; gap:16px; position:relative; }
+  .avatar{ width:220px;height:220px; display:flex;align-items:center;justify-content:center; position:relative; }
   .saturn{ width:180px;height:180px;border-radius:50%;
     background: radial-gradient(circle at 30% 30%, #ff9bff, #5e00a8 70%);
-    box-shadow: 0 0 40px #a94eff, 0 0 80px rgba(200,0,255,0.4);
-    animation:spin 10s linear infinite; z-index:2;
-  }
+    box-shadow: 0 0 40px #a94eff, 0 0 80px rgba(200,0,255,0.4); animation:spin 10s linear infinite; z-index:2; }
   .ring{ position:absolute; width:260px;height:70px;border-radius:50%;
     background: linear-gradient(90deg,#d37cff,#9b5cff,#ff66cc,#d37cff);
-    transform: translateY(-10px) rotateX(70deg);
-    filter:blur(0.6px); animation:ringRotate 6s linear infinite; z-index:1;
-  }
+    transform: translateY(-10px) rotateX(70deg); filter:blur(0.6px); animation:ringRotate 6s linear infinite; z-index:1; }
   .saturn-glow{ position:absolute; width:220px;height:220px;border-radius:50%;
-    box-shadow:0 0 120px 40px rgba(180,0,255,0.25); animation:pulse 2.5s ease-in-out infinite alternate; z-index:0;
-  }
+    box-shadow:0 0 120px 40px rgba(180,0,255,0.25); animation:pulse 2.5s ease-in-out infinite alternate; z-index:0; }
   @keyframes spin{ from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
   @keyframes ringRotate{ from{transform: translateY(-10px) rotateX(70deg) rotateZ(0deg)} to{transform: translateY(-10px) rotateX(70deg) rotateZ(360deg)} }
   @keyframes pulse{ from{opacity:.7; transform:scale(.95)} to{opacity:1; transform:scale(1.05)} }
 
-  /* sağ: form & token yönetimi */
+  /* right: form & token yönetimi */
   .right{ flex:1; display:flex; flex-direction:column; gap:12px; }
-  .header{
-    display:flex;align-items:center;justify-content:space-between;gap:12px;
-  }
+  .header{ display:flex;align-items:center;justify-content:space-between;gap:12px; }
   .title{ font-size:20px;font-weight:800; letter-spacing:0.4px; }
   .form-card{
     padding:14px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);
@@ -85,10 +50,8 @@
   .btn.secondary{ background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.06); box-shadow:none }
   .status { font-size:13px;color:rgba(255,255,255,0.8); margin-left:6px; }
 
-  /* token list */
   .tokens {
-    margin-top:6px;
-    background:rgba(0,0,0,0.12); padding:12px;border-radius:8px; max-height:210px; overflow:auto;
+    margin-top:6px; background:rgba(0,0,0,0.12); padding:12px;border-radius:8px; max-height:210px; overflow:auto;
     border:1px solid rgba(255,255,255,0.02);
   }
   .token-row{ display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:6px; margin-bottom:6px;
@@ -98,24 +61,19 @@
   .token-row button{ padding:6px 8px; font-size:12px; border-radius:8px; border:none; cursor:pointer; background:rgba(255,255,255,0.04); color:#fff; }
 
   .muted{ color:rgba(255,255,255,0.5); font-size:13px; }
-
-  /* küçük */
   .small { font-size:12px;color:rgba(255,255,255,0.6); }
 
-  @media (max-width:920px){
-    .panel{ flex-direction:column; align-items:center; }
-    .left{ order:2 }
-  }
+  @media (max-width:920px){ .panel{ flex-direction:column; align-items:center; } .left{ order:2 } }
 </style>
 </head>
 <body>
 
   <div class="panel" role="application" aria-label="Mercury Spammer Panel - local token loader">
     <div class="left" aria-hidden="false">
-      <div class="avatar">
-        <div class="ring" aria-hidden="true"></div>
-        <div class="saturn" aria-hidden="true"></div>
-        <div class="saturn-glow" aria-hidden="true"></div>
+      <div class="avatar" aria-hidden="true">
+        <div class="ring"></div>
+        <div class="saturn"></div>
+        <div class="saturn-glow"></div>
       </div>
       <div style="text-align:center">
         <div style="font-size:18px;font-weight:900">KANKA RIG</div>
@@ -145,7 +103,6 @@
           <input id="fileInput" type="file" accept=".txt,text/plain" style="display:none" />
 
           <button id="addTokenBtn" class="btn" title="Satır satır token içeren .txt dosyası seç">Add Token (Dosya)</button>
-          <button id="manualBtn" class="btn secondary" title="Manuel token ekle">Manual Add</button>
 
           <div class="status" id="status">Yüklenen: <strong id="count">0</strong> token</div>
         </div>
@@ -165,23 +122,23 @@
 
 <script>
 /*
-  Güvenlik notu: Bu uygulama tamamen client-side çalışır.
-  - Dosya içeriği tarayıcıda okunur, sunucuya gönderilmez.
-  - "Token" olarak geçen veriler base64 formatında kontrol edilir; 
-    bu demo sadece dosya okuma / localStorage yönetimi sağlar.
+  Davranış:
+  - Tokenler localStorage'da tutulur (STORAGE_KEY)
+  - Kullanıcı sayfayı gizlediğinde veya unload olduğunda EXPIRY_KEY'e Date.now()+5*60*1000 yazılır.
+  - Kullanıcı geri dönerse (visibilitychange visible) EXPIRY_KEY temizlenir.
+  - Periyodik kontrol expiry geçtiyse tokenler silinir.
+  - Manual Add tamamen kaldırıldı.
 */
 
+const STORAGE_KEY = 'mercury_tokens';
+const EXPIRY_KEY = 'mercury_tokens_expiry';
 const fileInput = document.getElementById('fileInput');
 const addTokenBtn = document.getElementById('addTokenBtn');
-const manualBtn = document.getElementById('manualBtn');
 const tokensBox = document.getElementById('tokensBox');
 const countEl = document.getElementById('count');
 const exportBtn = document.getElementById('exportBtn');
 const clearBtn = document.getElementById('clearBtn');
 
-const STORAGE_KEY = 'mercury_tokens';
-
-// helper: load tokens from localStorage
 function loadTokens(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -190,27 +147,27 @@ function loadTokens(){
 }
 function saveTokens(arr){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  // aktif kullanıcı olduğu için expiry'yi iptal et
+  localStorage.removeItem(EXPIRY_KEY);
+  renderTokens();
+}
+function clearTokens(){
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(EXPIRY_KEY);
   renderTokens();
 }
 
-// mask base64 for preview (keep first 4 and last 4)
+// mask preview
 function maskToken(t){
   if(t.length <= 12) return '••• ' + t.slice(-6);
   return t.slice(0,4) + '••••••' + t.slice(-4);
 }
 
-// validates base64-ish string (simple)
-function isBase64Like(s){
-  // allow = padding, +, /, A-Z a-z 0-9
-  if(!s || typeof s !== 'string') return false;
-  s = s.trim();
-  // remove newlines
-  s = s.replace(/\\r|\\n/g,'');
-  const b64 = /^[A-Za-z0-9+/=]+$/;
-  return b64.test(s);
+// simple base64-like validator removed per isteğin; accept any non-empty line
+function isTokenLike(s){
+  return typeof s === 'string' && s.trim().length > 0;
 }
 
-// render list (first 20 masked)
 function renderTokens(){
   const tokens = loadTokens();
   countEl.textContent = tokens.length;
@@ -219,7 +176,6 @@ function renderTokens(){
     tokensBox.innerHTML = '<div class="small muted">Henüz token yok.</div>';
     return;
   }
-
   const list = document.createElement('div');
   const limit = Math.min(20, tokens.length);
   for(let i=0;i<limit;i++){
@@ -255,12 +211,11 @@ function renderTokens(){
     list.appendChild(row);
   }
 
-  // if more than limit, show note
   if(tokens.length > limit){
     const more = document.createElement('div');
     more.className = 'small muted';
     more.style.marginTop='8px';
-    more.textContent = `... ve ${tokens.length - limit} tane daha (tümünü görmek için export yap veya console'dan loadTokens() çağır).`;
+    more.textContent = `... ve ${tokens.length - limit} tane daha.`;
     tokensBox.appendChild(list);
     tokensBox.appendChild(more);
   } else {
@@ -268,7 +223,7 @@ function renderTokens(){
   }
 }
 
-// handle file selection
+// file loading
 addTokenBtn.addEventListener('click', ()=> fileInput.click());
 fileInput.addEventListener('change', (ev)=>{
   const f = ev.target.files[0];
@@ -278,36 +233,22 @@ fileInput.addEventListener('change', (ev)=>{
     fileInput.value='';
     return;
   }
-
   const reader = new FileReader();
   reader.onload = function(e){
     const text = e.target.result;
-    // split lines, trim, filter empty
-    const lines = text.split(/\\r?\\n/).map(s=>s.trim()).filter(s=>s.length>0);
+    const lines = text.split(/\r?\n/).map(s=>s.trim()).filter(s=>s.length>0);
     if(lines.length === 0){
       alert('Dosyada okunacak satır yok.');
       fileInput.value='';
       return;
     }
-
-    // validate and collect only base64-like lines
-    const good = [], bad = [];
-    for(const L of lines){
-      if(isBase64Like(L)) good.push(L);
-      else bad.push(L);
-    }
-
-    // merge with existing tokens, avoid duplicates
+    // accept any non-empty lines
+    const good = lines.filter(isTokenLike);
     const existing = loadTokens();
     const merged = existing.concat(good.filter(x=>!existing.includes(x)));
-
     saveTokens(merged);
     fileInput.value='';
-
-    // feedback
-    let msg = `${good.length} token yüklendi.`;
-    if(bad.length>0) msg += ` ${bad.length} satır base64 formatına uymadığı için atıldı.`;
-    alert(msg);
+    alert(`${good.length} satır eklendi.`);
   };
   reader.onerror = function(){
     alert('Dosya okunamadı.');
@@ -316,28 +257,11 @@ fileInput.addEventListener('change', (ev)=>{
   reader.readAsText(f);
 });
 
-// manual add dialog
-manualBtn.addEventListener('click', ()=>{
-  const txt = prompt('Manuel token ekle (her token yeni satıra gelecek):\\n(En çok 200 satır önerilir)');
-  if(!txt) return;
-  const lines = txt.split(/\\r?\\n/).map(s=>s.trim()).filter(s=>s.length>0);
-  if(lines.length===0) return;
-  const good = [], bad=[];
-  for(const L of lines){
-    if(isBase64Like(L)) good.push(L);
-    else bad.push(L);
-  }
-  const existing = loadTokens();
-  const merged = existing.concat(good.filter(x=>!existing.includes(x)));
-  saveTokens(merged);
-  alert(`${good.length} token eklendi. ${bad.length} geçersiz satır atıldı.`);
-});
-
-// export tokens to txt
+// export
 exportBtn.addEventListener('click', ()=>{
   const tokens = loadTokens();
   if(tokens.length===0){ alert('Kaydedilmiş token yok.'); return; }
-  const blob = new Blob([tokens.join('\\n')], {type:'text/plain;charset=utf-8'});
+  const blob = new Blob([tokens.join('\n')], {type:'text/plain;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -348,21 +272,65 @@ exportBtn.addEventListener('click', ()=>{
   URL.revokeObjectURL(url);
 });
 
-// clear all tokens
+// clear
 clearBtn.addEventListener('click', ()=>{
   if(!confirm('Tüm tokenleri temizlemek istediğine emin misin?')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  renderTokens();
+  clearTokens();
 });
 
-// init
+// EXPIRY handling:
+// call when page hidden/unload -> set expiry to now + 5min
+function setExpiryInFiveMinutes(){
+  const expiry = Date.now() + 5 * 60 * 1000; // 5 dakika
+  localStorage.setItem(EXPIRY_KEY, String(expiry));
+}
+// cancel expiry when user returns
+function clearExpiry(){
+  localStorage.removeItem(EXPIRY_KEY);
+}
+
+// on visibility change
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden){
+    // user left the page (tab switched or minimized)
+    setExpiryInFiveMinutes();
+  } else {
+    // user returned
+    clearExpiry();
+  }
+});
+
+// on unload (user closes or navigates away) set expiry as well
+window.addEventListener('beforeunload', ()=>{
+  // we can't do async work here; just set expiry
+  setExpiryInFiveMinutes();
+});
+
+// periodic check: if expiry passed -> clear tokens
+function checkExpiry(){
+  const expRaw = localStorage.getItem(EXPIRY_KEY);
+  if(!expRaw) return;
+  const exp = Number(expRaw);
+  if(isNaN(exp)) { localStorage.removeItem(EXPIRY_KEY); return; }
+  if(Date.now() > exp){
+    // expiry passed -> delete tokens and expiry
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(EXPIRY_KEY);
+    renderTokens();
+    // optional user feedback
+    try{ alert('Tokenler 5 dakika sonra otomatik silindi (kullanıcı sayfayı terk etmişti).'); }catch(e){}
+  }
+}
+
+// run periodic check every 15s and once on load
+setInterval(checkExpiry, 15000);
+checkExpiry();
+
+// initial render
 renderTokens();
 
-// expose a safe helper on window for dev (optional)
-window.Mercury = {
-  loadTokens: loadTokens,
-  saveTokens: saveTokens
-};
+// expose for debugging
+window.Mercury = { loadTokens, saveTokens, clearTokens, checkExpiry };
 </script>
 </body>
 </html>
