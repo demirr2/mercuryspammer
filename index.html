@@ -159,8 +159,7 @@ function clearTokens(){
 
 // mask preview
 function maskToken(t){
-  if(t.length <= 12) return '••• ' + t.slice(-6);
-  return t.slice(0,4) + '••••••' + t.slice(-4);
+  return t;
 }
 
 // simple base64-like validator removed per isteğin; accept any non-empty line
@@ -328,6 +327,26 @@ checkExpiry();
 
 // initial render
 renderTokens();
+
+  <a href="https://discord.gg/mercury" target="_blank" 
+   style="position:fixed; bottom:20px; right:20px; 
+          display:flex; align-items:center; justify-content:center; 
+          width:56px; height:56px; border-radius:50%;
+          background:linear-gradient(135deg,#5865F2,#3B49E0);
+          box-shadow:0 0 20px rgba(88,101,242,0.4);
+          transition:transform .25s ease, box-shadow .25s ease;
+          z-index:999;">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="28" height="28">
+    <path d="M20.317 4.369a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037 13.842 13.842 0 00-.606 1.248 19.736 19.736 0 00-5.887 0 12.509 12.509 0 00-.617-1.248.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.069.069 0 00-.032.027C.533 9.046-.32 13.58.099 18.06a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.02.078.078 0 00.084-.027 13.958 13.958 0 001.19-1.937.076.076 0 00-.041-.107 13.107 13.107 0 01-1.872-.9.077.077 0 01-.008-.128c.125-.094.25-.192.37-.291a.074.074 0 01.077-.01c3.927 1.792 8.18 1.792 12.061 0a.074.074 0 01.078.01c.12.099.245.198.37.291a.077.077 0 01-.006.128 12.5 12.5 0 01-1.873.9.076.076 0 00-.04.108 15.174 15.174 0 001.188 1.936.076.076 0 00.084.028 19.88 19.88 0 005.995-3.02.077.077 0 00.031-.056c.5-5.177-.838-9.673-3.548-13.664a.061.061 0 00-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.947 2.419-2.157 2.419z"/>
+  </svg>
+</a>
+
+<style>
+a[href*="discord.gg"]:hover {
+  transform:scale(1.08);
+  box-shadow:0 0 30px rgba(88,101,242,0.7);
+}
+</style>
 
 // expose for debugging
 window.Mercury = { loadTokens, saveTokens, clearTokens, checkExpiry };
