@@ -6,7 +6,27 @@
   <title>Mercury Spammer</title>
   <link rel="stylesheet" href="theme.css">
   <style>
-    /* Form ve butonlar aynı */
+    /* --- GENEL FORM STİLİ --- */
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 30%, #140021, #000);
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+    }
+    .rig {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      gap: 60px;
+      padding: 40px;
+    }
+    .right {
+      width: 380px;
+      max-width: 90%;
+    }
+
     .form-card {
       background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
       border:1px solid rgba(255,255,255,0.04);
@@ -20,31 +40,87 @@
     .form-row { display:flex;flex-direction:column; gap:6px; }
     label{ font-size:13px;color:rgba(255,255,255,0.8); font-weight:700; }
     input[type="text"], textarea {
-      font-family: var(--mono);
+      font-family: monospace;
       font-size:14px;
       padding:10px 12px;
       border-radius:8px;
       border:1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.01);
+      background: rgba(255,255,255,0.02);
       color: #eaf6ff;
       outline:none;
       resize:vertical;
     }
-    input[type="text"]::placeholder, textarea::placeholder { color: rgba(255,255,255,0.35); }
     .actions { display:flex; gap:10px; align-items:center; margin-top:6px; }
     .add-btn {
       padding:10px 14px;
       font-weight:900;
       border-radius:10px;
       border:1px solid rgba(255,255,255,0.06);
-      background: linear-gradient(90deg,var(--neon1),var(--neon2));
+      background: linear-gradient(90deg,#9b5cff,#ff66cc);
       color:#041017;
       cursor:pointer;
-      box-shadow: var(--glow);
+      box-shadow: 0 0 20px #9b5cff;
     }
     .small-muted { font-size:12px;color:rgba(255,255,255,0.5) }
 
-    /* Discord floating button (orijinal DC stili) */
+    /* --- MOR SATÜRN ANİMASYONLU LOGO --- */
+    .avatar {
+      position: relative;
+      width: 200px;
+      height: 200px;
+    }
+
+    .saturn {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ff9bff, #5e00a8 70%);
+      box-shadow: 0 0 40px #a94eff, 0 0 80px rgba(200,0,255,0.3);
+      animation: spin 10s linear infinite;
+    }
+
+    .ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 240px;
+      height: 60px;
+      margin-left: -120px;
+      margin-top: -30px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, rgba(255,255,255,0.2), rgba(180,0,255,0.7), rgba(255,255,255,0.2));
+      box-shadow: 0 0 40px rgba(180,0,255,0.6);
+      transform: rotateX(65deg);
+      animation: ringSpin 8s linear infinite;
+      filter: blur(0.6px);
+    }
+
+    .saturn-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      box-shadow: 0 0 100px 40px rgba(180,0,255,0.3);
+      animation: pulse 2.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes ringSpin {
+      from { transform: rotateX(65deg) rotateZ(0deg); }
+      to { transform: rotateX(65deg) rotateZ(360deg); }
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.7; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1.1); }
+    }
+
+    /* --- DISCORD BUTONU --- */
     .discord-fab {
       position:fixed;
       right:22px;
@@ -70,20 +146,7 @@
       fill:#ffffff;
     }
 
-    /* Venüs logosu ve başlık */
-    .project-header{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:10px;
-    }
-    .venus-logo{
-      width:26px;
-      height:26px;
-      fill:var(--neon2, #ff66cc);
-      filter:drop-shadow(0 0 8px var(--neon2, #ff66cc));
-    }
-
+    /* --- TOAST --- */
     .toast {
       position:fixed;
       right:22px;
@@ -98,7 +161,7 @@
     }
 
     @media (max-width:900px){
-      .rig{ padding:18px; }
+      .rig{ flex-direction: column; gap: 40px; }
       .discord-fab{ right:12px; bottom:12px; width:50px; height:50px; }
     }
   </style>
@@ -106,23 +169,25 @@
 <body>
 
   <div class="rig" role="main" aria-label="Mercury Spammer panel">
+
+    <!-- Sol taraf: animasyonlu Satürn logosu -->
     <div class="left" aria-hidden="true">
-      <div class="avatar" aria-hidden="true"><div class="cube-edge"></div></div>
-      <div style="margin-top:10px;">
-        <div style="font-size:18px;font-weight:900">KANKA RIG</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.55)">Görgüsüz performans</div>
+      <div class="avatar">
+        <div class="saturn"></div>
+        <div class="ring"></div>
+        <div class="saturn-glow"></div>
+      </div>
+      <div style="margin-top:20px;text-align:center">
+        <div style="font-size:18px;font-weight:900">Mercury Spammer</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55)">Mor Satürn Modu 💫</div>
       </div>
     </div>
 
+    <!-- Sağ taraf: Mercury Spammer formu -->
     <div class="right" role="region" aria-label="Lookup form">
       <div class="controls" style="align-items:flex-start;">
         <div style="display:flex;flex-direction:column;gap:6px;width:100%">
-          <!-- Başlık + Venüs logosu -->
-          <div class="project-header">
-            <svg class="venus-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a7 7 0 0 0 0 14h1v2h-2v2h2v2h2v-2h2v-2h-2v-2h1a7 7 0 0 0 0-14zm0 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10z"/></svg>
-            <div style="font-size:22px;font-weight:900;">Mercury Spammer</div>
-          </div>
-
+         
           <div class="form-card" role="form" aria-label="Mercury spam form">
             <div class="form-row">
               <label for="channelId">Channel ID</label>
@@ -148,7 +213,7 @@
     </div>
   </div>
 
-  <!-- Orijinal Discord butonu -->
+  <!-- Discord butonu -->
   <a class="discord-fab" href="https://discord.gg/HnJUVFUvCQ" target="_blank" rel="noopener noreferrer" aria-label="Discord'a katıl">
     <svg viewBox="0 0 245 240" xmlns="http://www.w3.org/2000/svg"><path d="M104.4 104.8c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1s-4.5-11.1-10.2-11.1zm36.2 0c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1s-4.5-11.1-10.2-11.1z"/><path d="M189.5 20h-134C41.5 20 30 31.5 30 45.5v149c0 14 11.5 25.5 25.5 25.5h113.4l-5.3-18.4 12.7 11.8 12 11.1 21.3 19.4V45.5c0-14-11.5-25.5-25.5-25.5zm-38.6 131s-3.6-4.3-6.6-8.1c13.1-3.7 18.1-11.8 18.1-11.8-4.1 2.7-8 4.5-11.5 5.8-5 2.1-9.8 3.5-14.5 4.3-9.6 1.8-18.3 1.3-25.8-.1-5.7-1.1-10.6-2.7-14.7-4.3-2.3-.9-4.8-2-7.3-3.4-.3-.2-.6-.3-.9-.5-.2-.1-.3-.2-.4-.2-1.8-1-2.8-1.7-2.8-1.7s4.8 8 17.5 11.8c-3 3.8-6.7 8.3-6.7 8.3-22.1-.7-30.5-15.2-30.5-15.2 0-32.2 14.4-58.3 14.4-58.3 14.4-10.8 28.1-10.5 28.1-10.5l1 1.2c-18 5.1-26.3 13-26.3 13s2.2-1.2 5.9-2.9c10.7-4.7 19.2-6 22.7-6.3.6-.1 1.1-.2 1.7-.2 6.1-.8 13-1 20.2-.2 9.5 1.1 19.8 3.9 30.2 9.6 0 0-7.9-7.5-24.9-12.5l1.4-1.6s13.7-.3 28.1 10.5c0 0 14.4 26.1 14.4 58.3-.1 0-8.4 14.5-30.4 15.2z"/></svg>
   </a>
