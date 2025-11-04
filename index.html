@@ -9,7 +9,7 @@
     /* --- GENEL FORM STİLİ --- */
     body {
       margin: 0;
-      background: radial-gradient(circle at 20% 30%, #140021, #000);
+      background-color: #050008; /* gradient kaldırıldı, düz uzay rengi */
       font-family: "Poppins", sans-serif;
       color: #fff;
       overflow-x: hidden;
@@ -28,7 +28,7 @@
     }
 
     .form-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      background: rgba(255,255,255,0.02);
       border:1px solid rgba(255,255,255,0.04);
       border-radius:10px;
       padding:16px;
@@ -68,13 +68,15 @@
       position: relative;
       width: 200px;
       height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .saturn {
       position: relative;
       width: 160px;
       height: 160px;
-      margin: 0 auto;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #ff9bff, #5e00a8 70%);
       box-shadow: 0 0 40px #a94eff, 0 0 80px rgba(200,0,255,0.3);
@@ -187,7 +189,6 @@
     <div class="right" role="region" aria-label="Lookup form">
       <div class="controls" style="align-items:flex-start;">
         <div style="display:flex;flex-direction:column;gap:6px;width:100%">
-         
           <div class="form-card" role="form" aria-label="Mercury spam form">
             <div class="form-row">
               <label for="channelId">Channel ID</label>
