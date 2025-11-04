@@ -4,12 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Mercury Spammer</title>
-  <link rel="stylesheet" href="theme.css">
   <style>
-    /* --- GENEL FORM STİLİ --- */
+    /* --- GENEL TASARIM --- */
     body {
       margin: 0;
-      background-color: #050008; /* gradient kaldırıldı, düz uzay rengi */
+      background: radial-gradient(circle at 20% 30%, #140021, #000);
       font-family: "Poppins", sans-serif;
       color: #fff;
       overflow-x: hidden;
@@ -28,7 +27,7 @@
     }
 
     .form-card {
-      background: rgba(255,255,255,0.02);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
       border:1px solid rgba(255,255,255,0.04);
       border-radius:10px;
       padding:16px;
@@ -63,7 +62,7 @@
     }
     .small-muted { font-size:12px;color:rgba(255,255,255,0.5) }
 
-    /* --- MOR SATÜRN ANİMASYONLU LOGO --- */
+    /* --- MOR SATÜRN ANİMASYONLU LOGO (gizleyen gradyant kaldırıldı) --- */
     .avatar {
       position: relative;
       width: 200px;
@@ -79,8 +78,9 @@
       height: 160px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #ff9bff, #5e00a8 70%);
-      box-shadow: 0 0 40px #a94eff, 0 0 80px rgba(200,0,255,0.3);
+      box-shadow: 0 0 40px #a94eff, 0 0 80px rgba(200,0,255,0.4);
       animation: spin 10s linear infinite;
+      z-index: 2;
     }
 
     .ring {
@@ -92,19 +92,20 @@
       margin-left: -120px;
       margin-top: -30px;
       border-radius: 50%;
-      background: linear-gradient(90deg, rgba(255,255,255,0.2), rgba(180,0,255,0.7), rgba(255,255,255,0.2));
-      box-shadow: 0 0 40px rgba(180,0,255,0.6);
-      transform: rotateX(65deg);
-      animation: ringSpin 8s linear infinite;
+      background: linear-gradient(90deg, #d37cff, #9b5cff, #ff66cc, #d37cff);
+      transform: rotateX(70deg);
       filter: blur(0.6px);
+      animation: ringRotate 6s linear infinite;
+      z-index: 1;
     }
 
     .saturn-glow {
       position: absolute;
       inset: 0;
       border-radius: 50%;
-      box-shadow: 0 0 100px 40px rgba(180,0,255,0.3);
+      box-shadow: 0 0 100px 40px rgba(180,0,255,0.25);
       animation: pulse 2.5s ease-in-out infinite alternate;
+      z-index: 0;
     }
 
     @keyframes spin {
@@ -112,9 +113,9 @@
       to { transform: rotate(360deg); }
     }
 
-    @keyframes ringSpin {
-      from { transform: rotateX(65deg) rotateZ(0deg); }
-      to { transform: rotateX(65deg) rotateZ(360deg); }
+    @keyframes ringRotate {
+      from { transform: rotateX(70deg) rotateZ(0deg); }
+      to { transform: rotateX(70deg) rotateZ(360deg); }
     }
 
     @keyframes pulse {
@@ -175,12 +176,12 @@
     <!-- Sol taraf: animasyonlu Satürn logosu -->
     <div class="left" aria-hidden="true">
       <div class="avatar">
-        <div class="saturn"></div>
         <div class="ring"></div>
+        <div class="saturn"></div>
         <div class="saturn-glow"></div>
       </div>
       <div style="margin-top:20px;text-align:center">
-        <div style="font-size:18px;font-weight:900">Mercury Spammer</div>
+        <div style="font-size:18px;font-weight:900">KANKA RIG</div>
         <div style="font-size:12px;color:rgba(255,255,255,0.55)">Mor Satürn Modu 💫</div>
       </div>
     </div>
@@ -189,6 +190,7 @@
     <div class="right" role="region" aria-label="Lookup form">
       <div class="controls" style="align-items:flex-start;">
         <div style="display:flex;flex-direction:column;gap:6px;width:100%">
+          <div style="font-size:22px;font-weight:900;">Mercury Spammer</div>
           <div class="form-card" role="form" aria-label="Mercury spam form">
             <div class="form-row">
               <label for="channelId">Channel ID</label>
