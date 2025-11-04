@@ -6,6 +6,7 @@
 <title>Mercury Spammer — Token Loader (Local)</title>
 <style>
   :root{ --bg:#050008; --neon1:#9b5cff; --neon2:#ff66cc; }
+  *{box-sizing:border-box}
   body{ margin:0; min-height:100vh; background:var(--bg); color:#fff; font-family:Inter, "Poppins", system-ui, sans-serif;
          display:flex; align-items:center; justify-content:center; padding:32px; }
   .panel{
@@ -51,17 +52,38 @@
   .status { font-size:13px;color:rgba(255,255,255,0.8); margin-left:6px; }
 
   .tokens {
-    margin-top:6px; background:rgba(0,0,0,0.12); padding:12px;border-radius:8px; max-height:210px; overflow:auto;
+    margin-top:6px; background:rgba(0,0,0,0.12); padding:12px;border-radius:8px; max-height:260px; overflow:auto;
     border:1px solid rgba(255,255,255,0.02);
   }
   .token-row{ display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:6px; margin-bottom:6px;
     background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); font-family:monospace; font-size:13px;
+    word-break:break-all;
   }
-  .token-row .leftcol{ display:flex;gap:10px;align-items:center; }
+  .token-row .leftcol{ display:flex;gap:10px;align-items:center; max-width:78%; }
   .token-row button{ padding:6px 8px; font-size:12px; border-radius:8px; border:none; cursor:pointer; background:rgba(255,255,255,0.04); color:#fff; }
 
   .muted{ color:rgba(255,255,255,0.5); font-size:13px; }
   .small { font-size:12px;color:rgba(255,255,255,0.6); }
+
+  /* discord fab style fallback */
+  .discord-fab {
+    position:fixed;
+    right:22px;
+    bottom:22px;
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    background-color:#5865F2;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 30px rgba(88,101,242,0.5);
+    transition:transform .2s ease, box-shadow .2s ease;
+    border:none;
+    z-index:9999;
+  }
+  .discord-fab:hover{ transform:translateY(-5px) scale(1.05); box-shadow:0 10px 40px rgba(88,101,242,0.7); }
+  .discord-fab svg{ width:32px; height:32px; fill:#ffffff; display:block; }
 
   @media (max-width:920px){ .panel{ flex-direction:column; align-items:center; } .left{ order:2 } }
 </style>
@@ -71,9 +93,9 @@
   <div class="panel" role="application" aria-label="Mercury Spammer Panel - local token loader">
     <div class="left" aria-hidden="false">
       <div class="avatar" aria-hidden="true">
-        <div class="ring"></div>
-        <div class="saturn"></div>
-        <div class="saturn-glow"></div>
+        <div class="ring" aria-hidden="true"></div>
+        <div class="saturn" aria-hidden="true"></div>
+        <div class="saturn-glow" aria-hidden="true"></div>
       </div>
       <div style="text-align:center">
         <div style="font-size:18px;font-weight:900">KANKA RIG</div>
@@ -99,39 +121,38 @@
         </div>
 
         <div class="controls">
-          <!-- gizli file input -->
+          <!-- gizli file input (DOM'da görünür ama 0 opacity yerine display:none) -->
           <input id="fileInput" type="file" accept=".txt,text/plain" style="display:none" />
 
-          <button id="addTokenBtn" class="btn" title="Satır satır token içeren .txt dosyası seç">Add Token (Dosya)</button>
+          <button id="addTokenBtn" class="btn" type="button" title="Satır satır token içeren .txt dosyası seç">Add Token (Dosya)</button>
 
           <div class="status" id="status">Yüklenen: <strong id="count">0</strong> token</div>
         </div>
 
         <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
-          <button id="exportBtn" class="btn secondary">Export (.txt)</button>
-          <button id="clearBtn" class="btn secondary">Clear All</button>
-          <div class="small muted">Preview (ilk 20 maskelenmiş)</div>
+          <button id="exportBtn" class="btn secondary" type="button">Export (.txt)</button>
+          <button id="clearBtn" class="btn secondary" type="button">Clear All</button>
+          <div class="small muted">Preview (tam token gösteriliyor)</div>
         </div>
 
-        <div class="tokens" id="tokensBox" aria-live="polite">
+        <div class="tokens" id="tokensBox" aria-live="polite" aria-atomic="true">
           <div class="small muted">Henüz token yok.</div>
         </div>
       </div>
     </div>
   </div>
 
-<script>
-/*
-  Davranış:
-  - Tokenler localStorage'da tutulur (STORAGE_KEY)
-  - Kullanıcı sayfayı gizlediğinde veya unload olduğunda EXPIRY_KEY'e Date.now()+5*60*1000 yazılır.
-  - Kullanıcı geri dönerse (visibilitychange visible) EXPIRY_KEY temizlenir.
-  - Periyodik kontrol expiry geçtiyse tokenler silinir.
-  - Manual Add tamamen kaldırıldı.
-*/
+  <!-- Discord fab (kendi invite linkin) -->
+  <a class="discord-fab" href="https://discord.gg/HnJUVFUvCQ" target="_blank" rel="noopener noreferrer" aria-label="Discord'a katıl">
+    <svg viewBox="0 0 245 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M104.4 104.8c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1s-4.5-11.1-10.2-11.1zm36.2 0c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1s-4.5-11.1-10.2-11.1z"/><path d="M189.5 20h-134C41.5 20 30 31.5 30 45.5v149c0 14 11.5 25.5 25.5 25.5h113.4l-5.3-18.4 12.7 11.8 12 11.1 21.3 19.4V45.5c0-14-11.5-25.5-25.5-25.5zm-38.6 131s-3.6-4.3-6.6-8.1c13.1-3.7 18.1-11.8 18.1-11.8-4.1 2.7-8 4.5-11.5 5.8-5 2.1-9.8 3.5-14.5 4.3-9.6 1.8-18.3 1.3-25.8-.1-5.7-1.1-10.6-2.7-14.7-4.3-2.3-.9-4.8-2-7.3-3.4-.3-.2-.6-.3-.9-.5-.2-.1-.3-.2-.4-.2-1.8-1-2.8-1.7-2.8-1.7s4.8 8 17.5 11.8c-3 3.8-6.7 8.3-6.7 8.3-22.1-.7-30.5-15.2-30.5-15.2 0-32.2 14.4-58.3 14.4-58.3 14.4-10.8 28.1-10.5 28.1-10.5l1 1.2c-18 5.1-26.3 13-26.3 13s2.2-1.2 5.9-2.9c10.7-4.7 19.2-6 22.7-6.3.6-.1 1.1-.2 1.7-.2 6.1-.8 13-1 20.2-.2 9.5 1.1 19.8 3.9 30.2 9.6 0 0-7.9-7.5-24.9-12.5l1.4-1.6s13.7-.3 28.1 10.5c0 0 14.4 26.1 14.4 58.3-.1 0-8.4 14.5-30.4 15.2z"/></svg>
+  </a>
 
+<script>
+/* STORAGE KEYS */
 const STORAGE_KEY = 'mercury_tokens';
 const EXPIRY_KEY = 'mercury_tokens_expiry';
+
+/* DOM */
 const fileInput = document.getElementById('fileInput');
 const addTokenBtn = document.getElementById('addTokenBtn');
 const tokensBox = document.getElementById('tokensBox');
@@ -139,15 +160,13 @@ const countEl = document.getElementById('count');
 const exportBtn = document.getElementById('exportBtn');
 const clearBtn = document.getElementById('clearBtn');
 
+/* helpers */
 function loadTokens(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }catch(e){ return []; }
+  try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; }
+  catch(e){ return []; }
 }
 function saveTokens(arr){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-  // aktif kullanıcı olduğu için expiry'yi iptal et
   localStorage.removeItem(EXPIRY_KEY);
   renderTokens();
 }
@@ -157,16 +176,7 @@ function clearTokens(){
   renderTokens();
 }
 
-// mask preview
-function maskToken(t){
-  return t;
-}
-
-// simple base64-like validator removed per isteğin; accept any non-empty line
-function isTokenLike(s){
-  return typeof s === 'string' && s.trim().length > 0;
-}
-
+/* render tokens (NO MASKING) */
 function renderTokens(){
   const tokens = loadTokens();
   countEl.textContent = tokens.length;
@@ -176,8 +186,7 @@ function renderTokens(){
     return;
   }
   const list = document.createElement('div');
-  const limit = Math.min(20, tokens.length);
-  for(let i=0;i<limit;i++){
+  for(let i=0;i<tokens.length;i++){
     const t = tokens[i];
     const row = document.createElement('div');
     row.className = 'token-row';
@@ -190,8 +199,8 @@ function renderTokens(){
     idx.className = 'small muted';
 
     const tokenText = document.createElement('div');
-    tokenText.textContent = maskToken(t);
-    tokenText.title = 'Token preview (maskelenmiş)';
+    tokenText.textContent = t;
+    tokenText.title = 'Token tam gösteriliyor';
 
     leftcol.appendChild(idx);
     leftcol.appendChild(tokenText);
@@ -209,54 +218,49 @@ function renderTokens(){
     row.appendChild(removeBtn);
     list.appendChild(row);
   }
-
-  if(tokens.length > limit){
-    const more = document.createElement('div');
-    more.className = 'small muted';
-    more.style.marginTop='8px';
-    more.textContent = `... ve ${tokens.length - limit} tane daha.`;
-    tokensBox.appendChild(list);
-    tokensBox.appendChild(more);
-  } else {
-    tokensBox.appendChild(list);
-  }
+  tokensBox.appendChild(list);
 }
 
-// file loading
-addTokenBtn.addEventListener('click', ()=> fileInput.click());
-fileInput.addEventListener('change', (ev)=>{
-  const f = ev.target.files[0];
-  if(!f){ return; }
+/* File loading: open dialog on button click */
+addTokenBtn.addEventListener('click', () => {
+  // ensure fileInput is in DOM and clickable
+  fileInput.value = '';
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', (ev) => {
+  const f = ev.target.files && ev.target.files[0];
+  if(!f) return;
   if(!f.name.toLowerCase().endsWith('.txt')){
     alert('Lütfen .txt uzantılı dosya seç. Her satır bir token olmalı.');
-    fileInput.value='';
+    fileInput.value = '';
     return;
   }
+
   const reader = new FileReader();
   reader.onload = function(e){
     const text = e.target.result;
     const lines = text.split(/\r?\n/).map(s=>s.trim()).filter(s=>s.length>0);
     if(lines.length === 0){
       alert('Dosyada okunacak satır yok.');
-      fileInput.value='';
+      fileInput.value = '';
       return;
     }
-    // accept any non-empty lines
-    const good = lines.filter(isTokenLike);
+    // accept any non-empty lines; merge avoiding duplicates
     const existing = loadTokens();
-    const merged = existing.concat(good.filter(x=>!existing.includes(x)));
+    const merged = existing.concat(lines.filter(x=>!existing.includes(x)));
     saveTokens(merged);
-    fileInput.value='';
-    alert(`${good.length} satır eklendi.`);
+    fileInput.value = '';
+    alert(`${lines.length} satır eklendi.`);
   };
   reader.onerror = function(){
     alert('Dosya okunamadı.');
-    fileInput.value='';
+    fileInput.value = '';
   };
   reader.readAsText(f);
 });
 
-// export
+/* export */
 exportBtn.addEventListener('click', ()=>{
   const tokens = loadTokens();
   if(tokens.length===0){ alert('Kaydedilmiş token yok.'); return; }
@@ -271,84 +275,49 @@ exportBtn.addEventListener('click', ()=>{
   URL.revokeObjectURL(url);
 });
 
-// clear
+/* clear */
 clearBtn.addEventListener('click', ()=>{
   if(!confirm('Tüm tokenleri temizlemek istediğine emin misin?')) return;
   clearTokens();
 });
 
-// EXPIRY handling:
-// call when page hidden/unload -> set expiry to now + 5min
+/* EXPIRY HANDLING */
+// set expiry to now + 5 minutes
 function setExpiryInFiveMinutes(){
-  const expiry = Date.now() + 5 * 60 * 1000; // 5 dakika
+  const expiry = Date.now() + 5 * 60 * 1000;
   localStorage.setItem(EXPIRY_KEY, String(expiry));
 }
-// cancel expiry when user returns
+// clear expiry when user is present
 function clearExpiry(){
   localStorage.removeItem(EXPIRY_KEY);
 }
 
-// on visibility change
 document.addEventListener('visibilitychange', ()=>{
-  if(document.hidden){
-    // user left the page (tab switched or minimized)
-    setExpiryInFiveMinutes();
-  } else {
-    // user returned
-    clearExpiry();
-  }
+  if(document.hidden) setExpiryInFiveMinutes();
+  else clearExpiry();
 });
-
-// on unload (user closes or navigates away) set expiry as well
-window.addEventListener('beforeunload', ()=>{
-  // we can't do async work here; just set expiry
-  setExpiryInFiveMinutes();
-});
+window.addEventListener('beforeunload', ()=> setExpiryInFiveMinutes());
 
 // periodic check: if expiry passed -> clear tokens
 function checkExpiry(){
   const expRaw = localStorage.getItem(EXPIRY_KEY);
   if(!expRaw) return;
   const exp = Number(expRaw);
-  if(isNaN(exp)) { localStorage.removeItem(EXPIRY_KEY); return; }
+  if(isNaN(exp)){ localStorage.removeItem(EXPIRY_KEY); return; }
   if(Date.now() > exp){
-    // expiry passed -> delete tokens and expiry
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(EXPIRY_KEY);
     renderTokens();
-    // optional user feedback
-    try{ alert('Tokenler 5 dakika sonra otomatik silindi (kullanıcı sayfayı terk etmişti).'); }catch(e){}
+    try{ alert('Tokenler otomatik olarak silindi (5 dakika sonra).'); }catch(e){}
   }
 }
-
-// run periodic check every 15s and once on load
 setInterval(checkExpiry, 15000);
 checkExpiry();
 
-// initial render
+/* init */
 renderTokens();
 
-  <a href="https://discord.gg/mercury" target="_blank" 
-   style="position:fixed; bottom:20px; right:20px; 
-          display:flex; align-items:center; justify-content:center; 
-          width:56px; height:56px; border-radius:50%;
-          background:linear-gradient(135deg,#5865F2,#3B49E0);
-          box-shadow:0 0 20px rgba(88,101,242,0.4);
-          transition:transform .25s ease, box-shadow .25s ease;
-          z-index:999;">
-  <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="28" height="28">
-    <path d="M20.317 4.369a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037 13.842 13.842 0 00-.606 1.248 19.736 19.736 0 00-5.887 0 12.509 12.509 0 00-.617-1.248.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.069.069 0 00-.032.027C.533 9.046-.32 13.58.099 18.06a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.02.078.078 0 00.084-.027 13.958 13.958 0 001.19-1.937.076.076 0 00-.041-.107 13.107 13.107 0 01-1.872-.9.077.077 0 01-.008-.128c.125-.094.25-.192.37-.291a.074.074 0 01.077-.01c3.927 1.792 8.18 1.792 12.061 0a.074.074 0 01.078.01c.12.099.245.198.37.291a.077.077 0 01-.006.128 12.5 12.5 0 01-1.873.9.076.076 0 00-.04.108 15.174 15.174 0 001.188 1.936.076.076 0 00.084.028 19.88 19.88 0 005.995-3.02.077.077 0 00.031-.056c.5-5.177-.838-9.673-3.548-13.664a.061.061 0 00-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.947 2.419-2.157 2.419z"/>
-  </svg>
-</a>
-
-<style>
-a[href*="discord.gg"]:hover {
-  transform:scale(1.08);
-  box-shadow:0 0 30px rgba(88,101,242,0.7);
-}
-</style>
-
-// expose for debugging
+/* expose helpers (debug) */
 window.Mercury = { loadTokens, saveTokens, clearTokens, checkExpiry };
 </script>
 </body>
