@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mercury Lookup</title>
+  <!-- Daha önce verdiğim CSS'i burada bağla -->
+  <link rel="stylesheet" href="gorgusuz.css">
+  <style>
+    /* Küçük ek stiller: form yerleşimi ve discord butonu */
+    .form-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      border-radius:10px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      width:100%;
+    }
+    .form-row { display:flex;flex-direction:column; gap:6px; }
+    label{ font-size:13px;color:rgba(255,255,255,0.8); font-weight:700; }
+    input[type="text"], textarea {
+      font-family: var(--mono);
+      font-size:14px;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.01);
+      color: #eaf6ff;
+      outline:none;
+      resize:vertical;
+    }
+    input[type="text"]::placeholder, textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .actions { display:flex; gap:10px; align-items:center; margin-top:6px; }
+    .add-btn {
+      padding:10px 14px;
+      font-weight:900;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(90deg,var(--neon1),var(--neon2));
+      color:#041017;
+      cursor:pointer;
+      box-shadow: var(--glow);
+    }
+    .small-muted { font-size:12px;color:rgba(255,255,255,0.5) }
+
+    /* Discord floating button (sağ alt köşe) */
+    .discord-fab {
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      width:56px;
+      height:56px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 12px 40px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+      transition:transform .18s ease;
+    }
+    .discord-fab:hover{ transform: translateY(-6px) scale(1.03); }
+    .discord-fab svg{ width:28px;height:28px; display:block; }
+
+    /* Küçük toast */
+    .toast {
+      position:fixed;
+      right:22px;
+      bottom:92px;
+      background: rgba(0,0,0,0.7);
+      color:#fff;
+      padding:10px 14px;
+      border-radius:8px;
+      font-weight:700;
+      display:none;
+      z-index:9999;
+    }
+
+    /* Mobil uyarısı */
+    @media (max-width:900px){
+      .rig{ padding:18px; }
+      .discord-fab{ right:12px; bottom:12px; width:48px; height:48px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="rig" role="main" aria-label="Mercury Lookup panel">
+    <!-- Left: görgüsüz bilgileri kullanmayacağız, sağda form -->
+    <div class="left" aria-hidden="true">
+      <!-- Boş bırakılabilir veya bunu kendi isteklerine göre doldurabilirsin -->
+      <div class="avatar" aria-hidden="true"><div class="cube-edge"></div></div>
+      <div style="margin-top:10px;">
+        <div style="font-size:18px;font-weight:900">KANKA RIG</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55)">Görgüsüz performans</div>
+      </div>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="right" role="region" aria-label="Lookup form">
+      <div class="controls" style="align-items:flex-start;">
+        <div style="display:flex;flex-direction:column;gap:6px;width:100%">
+          <div style="font-size:20px;font-weight:900">Mercury Lookup</div>
+          <div class="form-card" role="form" aria-label="Mercury lookup form">
+            <div class="form-row">
+              <label for="channelId">Channel ID</label>
+              <input id="channelId" name="channelId" type="text" placeholder="Örn: 123456789012345678" aria-required="true" />
+            </div>
+
+            <div class="form-row">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="4" placeholder="Gönderilecek mesaj" aria-required="true"></textarea>
+            </div>
+
+            <div class="actions">
+              <button id="addTokenBtn" class="add-btn" type="button">Add Token</button>
+              <div class="small-muted" id="statusText">Henüz eklenmedi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aşağıdaki alan görsel showoff / log olarak kullanılabilir -->
+      <div style="margin-top:12px;">
+        <div class="badge">Tip: Channel ID ve message girip Add Token'a bas</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Discord floating button: verilen invite link -->
+  <a class="discord-fab" href="https://discord.gg/HnJUVFUvCQ" target="_blank" rel="noopener noreferrer" aria-label="Discord'a katıl">
+    <!-- Inline discord SVG (minimal, lisans vs problem olmaz) -->
+    <svg viewBox="0 0 71 55" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path fill="currentColor" d="M60.104 4.552A58.564 58.564 0 0046.75.75a41.902 41.902 0 00-1.985 4.15 56.62 56.62 0 00-15.532 0A41.99 41.99 0 0026.25.75 58.58 58.58 0 0011.896 4.55C2.846 19.033.139 33.36 3.44 46.472a58.29 58.29 0 0018.44 9.35c1.37-1.9 2.6-3.88 3.66-5.95-5.294-1.55-9.213-5.385-11.02-10.08 2.955 1.75 6.224 2.906 9.6 3.294 9.44-1.63 15.6-6.05 17.8-11.9 3.018.16 6.08-.09 9.2-1.05-1.88 4.8-5.83 8.66-11.07 10.27 1.07 2.05 2.33 4.02 3.72 5.92a58.18 58.18 0 0018.44-9.35c3.3-13.11.6-27.44-9.45-41.92z"/>
+    </svg>
+  </a>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Token eklendi</div>
+
+  <script>
+    // Basit işlevsellik: butona basınca doğrula, durum yaz, console.log'a ekle
+    (function(){
+      const addBtn = document.getElementById('addTokenBtn');
+      const ch = document.getElementById('channelId');
+      const msg = document.getElementById('message');
+      const status = document.getElementById('statusText');
+      const toast = document.getElementById('toast');
+
+      addBtn.addEventListener('click', function(){
+        const channel = ch.value.trim();
+        const message = msg.value.trim();
+
+        if(!channel){
+          status.textContent = 'Channel ID boş olamaz';
+          status.style.color = 'orange';
+          return;
+        }
+        if(!message){
+          status.textContent = 'Message boş olamaz';
+          status.style.color = 'orange';
+          return;
+        }
+
+        // Örnek davranış: localStorage'a kaydet (tarayıcıda), gerçek backend yok
+        const tokens = JSON.parse(localStorage.getItem('mercury_tokens')||'[]');
+        tokens.push({ channel, message, addedAt: new Date().toISOString() });
+        localStorage.setItem('mercury_tokens', JSON.stringify(tokens));
+
+        status.textContent = 'Token eklendi ✓';
+        status.style.color = 'lightgreen';
+
+        // küçük toast göster
+        toast.style.display = 'block';
+        setTimeout(()=> toast.style.display = 'none', 2200);
+
+        console.log('Mercury token added:', {channel, message});
+      });
+    })();
+  </script>
+
+</body>
+</html>
